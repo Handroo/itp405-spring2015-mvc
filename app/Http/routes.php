@@ -27,5 +27,9 @@ Route::get('/songs/new','SongController@create');
 Route::post('/songs','SongController@storeSong');
 
 //DVD Homework Part 2
-Route::get('/dvds/{id}','DvdController@getDvdDetails');
+//Route::get('/dvds/{id}','DvdController@getDvdDetails');
 Route::post('/dvds/submitReview','DvdController@submitReview');
+
+//DVD Homework Part 3
+Route::get('/dvds/create','DvdController@createDvd');
+Route::post('/dvds/createDvdSubmit','DvdController@createDvdSubmit');

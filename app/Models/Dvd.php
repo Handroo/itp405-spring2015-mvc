@@ -2,13 +2,24 @@
 
 use DB;
 use Validator;
-class Dvd {
-    public static function validate($input){
+use Illuminate\Database\Eloquent\Model;
+class Dvd extends Model{
+    public static function validateReview($input){
         return Validator::make($input,[
-            'title' => 'required|min:5',
+            'title' => 'required',
             'rating' => 'required|integer',
             'comment' => 'required|min:20',
             'dvd_id' => 'required|integer'
+        ]);
+    }
+    public static function validateCreation($input){
+        return Validator::make($input,[
+            'title' => 'required|min:5',
+            'genre' => 'required|integer',
+            'label' => 'required|integer',
+            'sound' => 'required|integer',
+            'rating' => 'required|integer',
+            'format' => 'required|integer'
         ]);
     }
     public function getGenres(){
@@ -57,5 +68,13 @@ class Dvd {
 
     public static function createReview($data){
         return DB::table('reviews')->insert($data);
+    }
+
+    public static function createDvd($data){
+        return DB::table('dvds')->insert($data);
+    }
+
+    public function genre(){
+        return $this->belongsTo('App\Models\DvdGenre');
     }
 }
