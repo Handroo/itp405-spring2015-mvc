@@ -5,6 +5,12 @@
     <title>DVD Search</title>
 </head>
 <body>
+<div style="border:black solid 2px; float:left; width:15%;padding:15px;">
+    <?php foreach($genres as $genre) : ?>
+       <?php $n = rawurlencode(rawurlencode($genre->genre_name)) ?>
+        <?php echo "<a href=\" /genres/$n/dvds \"> $genre->genre_name </a>"?><br>
+    <?php endforeach ?>
+</div>
 <div style="position: fixed;
   top: 50%;
   left: 50%;

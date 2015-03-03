@@ -3,7 +3,9 @@
 use DB;
 use Validator;
 use Illuminate\Database\Eloquent\Model;
+
 class Dvd extends Model{
+    protected $table = 'dvds';
     public static function validateReview($input){
         return Validator::make($input,[
             'title' => 'required',
@@ -75,6 +77,22 @@ class Dvd extends Model{
     }
 
     public function genre(){
-        return $this->belongsTo('App\Models\DvdGenre');
+        return $this->belongsTo('App\Models\DvdGenre','genre_id');
+    }
+
+    public function format(){
+        return $this->belongsTo('App\Models\DvdFormat','format_id');
+    }
+
+    public function label(){
+        return $this->belongsTo('App\Models\DvdLabel','label_id');
+    }
+
+    public function rating(){
+        return $this->belongsTo('App\Models\DvdRating','rating_id');
+    }
+
+    public function sound(){
+        return $this->belongsTo('App\Models\DvdSound','sound_id');
     }
 }

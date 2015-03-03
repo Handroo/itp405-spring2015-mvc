@@ -17,7 +17,8 @@ use App\Models\DvdFormat;
 
 class DvdController extends Controller{
     public function search(){
-        $genres = (new Dvd())->getGenres();
+//        $genres = (new Dvd())->getGenres();
+        $genres = DvdGenre::all();
         $ratings = (new Dvd())->getRatings();
         return view('dvdsearch',[
             'genres' => $genres,
@@ -115,6 +116,31 @@ class DvdController extends Controller{
                 ->withInput()
                 ->withErrors($validation);
         }
+    }
+    public function dvdsWithGenre($genrename){
+        $name = rawurldecode($genrename);
+        $genre = DvdGenre::where('genre_name', 'LIKE', $name)->get();
+        $g_id = $genre[0]->id;
+
+        $dvds = Dvd::with('genre','format','label','rating','sound')->where('genre_id','=',$g_id)->get();
+
+        foreach ($dvds as $d)
+        {
+            $d->dvd_id = $d->id;
+            $d->genre_name = $d->genre->genre_name;
+            if($d->format) {
+                $d->format_name = $d->format->format_name;
+            }
+            $d->label_name = $d->label->label_name;
+            $d->rating_name = $d->rating->rating_name;
+            $d->sound_name = $d->sound->sound_name;
+        }
+        return view('dvdresults',[
+            'dvd_title' => 'All',
+            'genre' => $genrename,
+            'rating' => 'All',
+            'dvds' => $dvds
+        ]);
     }
 
 
