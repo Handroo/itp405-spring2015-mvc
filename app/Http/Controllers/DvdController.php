@@ -14,6 +14,9 @@ use App\Models\DvdLabel;
 use App\Models\DvdSound;
 use App\Models\DvdRating;
 use App\Models\DvdFormat;
+use App\Services\RottenTomatoes;
+use \Cache;
+
 
 class DvdController extends Controller{
     public function search(){
@@ -49,15 +52,54 @@ class DvdController extends Controller{
         ]);
     }
 
-    public function getDvdDetails($id){
+    public function getDvdDetails($id){//this is where we call the rotten tomatoes api
+        $movieFound = true;
+        $moviePicURL = "";
+        $critic_score = "";
+        $audience_score = "";
+        $runtime = "";
+        $abridged_cast = [];
+        $movieTitle = (new Dvd())->getDvdInfo($id)[0]->title;
+
+        $jsonString = RottenTomatoes::search($movieTitle);
+
+        $rtdata = json_decode($jsonString);
+        if(count($rtdata->movies) == 0){
+            $movieFound = false;
+
+
+        }else{
+            $maxMatchChar = 0;
+            $maxMatchIndex = 0;
+            for($i = 0; $i < count($rtdata->movies); $i++){
+                if(similar_text($movieTitle,$rtdata->movies[$i]->title) > $maxMatchChar){
+                    $maxMatchChar = similar_text($movieTitle,$rtdata->movies[$i]->title);
+                    $maxMatchIndex = $i;
+                }
+            }
+            $moviePicURL = $rtdata->movies[$maxMatchIndex]->posters->profile;
+            $critic_score = $rtdata->movies[$maxMatchIndex]->ratings->critics_score;
+            $audience_score = $rtdata->movies[$maxMatchIndex]->ratings->audience_score;
+            $runtime = $rtdata->movies[$maxMatchIndex]->runtime;
+            $abridged_cast = $rtdata->movies[$maxMatchIndex]->abridged_cast;
+        }
+
         $dvdInfo = (new Dvd())->getDvdInfo($id);
         $dvdReviews = (new Dvd())->getDvdReviews($id);
         $ratingRange = array("1", "2", "3", "4","5","6","7","8","9","10");
-//        dd($dvdReviews);
+
+
+//        dd(similar_text($dvdInfo[0]->title),);
         return view('dvdreview',[
             'dvdInfo' => $dvdInfo,
             'ratingRange' => $ratingRange,
-            'dvdReviews' => $dvdReviews
+            'dvdReviews' => $dvdReviews,
+            'movieFound' => $movieFound,
+            'moviePicURL' => $moviePicURL,
+            'critic_score'=> $critic_score,
+            'audience_score' => $audience_score,
+            'runtime' => $runtime,
+            'abridged_cast' => $abridged_cast
         ]);
     }
 

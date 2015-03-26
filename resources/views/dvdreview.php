@@ -37,7 +37,21 @@
         </tr>
     </tbody>
 </table>
+<?php if($movieFound) : ?>
+<div style="border: solid red 2px; padding:10px; text-align:center;" class="middleBox">
+    <h2 class="text-center">Rotten Tomatoes Info</h2>
+    <?php echo "<img src='$moviePicURL'><br>"?>
+    <?php echo "<h4>Critic Score: $critic_score</h4>"?>
+    <?php echo "<h4>Audience Score: $audience_score</h4>"?>
+    <?php echo "<h4>Runtime: $runtime</h4>"?>
+    <?php echo "<h3>CAST:</h3>"?>
+    <?php foreach($abridged_cast as $cast):?>
+        <?php echo "<h5> $cast->name</h5>"?>
+    <?php endforeach ?>
 
+</div>
+<br>
+<?php endif; ?>
 <div style="border: solid black 2px; padding:10px;" class="middleBox">
 <h4 class="text-center">Submit a Review!</h4>
 <form style="margin-left:35%;" class="form-inline" action="<?php echo url("/dvds/submitReview")?>" method="post">
